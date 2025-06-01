@@ -6,7 +6,6 @@ import com.google.protobuf.DynamicMessage;
 import io.grpc.*;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.ServerCalls;
-import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -102,7 +101,7 @@ public class DynamicGrpcServer {
 
                 serviceBuilder.addMethod(methodDescriptor,
                         ServerCalls.asyncUnaryCall(
-                                (request, responseObserver) -> serviceImpl.getUser(request, responseObserver)
+                                serviceImpl::getUser
                         ));
             }
 
@@ -115,7 +114,7 @@ public class DynamicGrpcServer {
 
                 serviceBuilder.addMethod(methodDescriptor,
                         ServerCalls.asyncUnaryCall(
-                                (request, responseObserver) -> serviceImpl.createUser(request, responseObserver)
+                                serviceImpl::createUser
                         ));
             }
         }

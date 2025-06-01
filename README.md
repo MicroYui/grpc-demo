@@ -19,14 +19,14 @@
 - Maven
 
 ## 项目结构 
-grpc-demo/
-├── src/main/
-│ ├── java/cn/edu/hit/
-│ │ ├── server/ # 服务器端代码
-│ │ ├── client/ # 客户端代码
-│ │ └── common/ # 公共工具类
-│ └── resources/proto/ # Proto定义文件
-├── pom.xml
+grpc-demo/\
+├── src/main/\
+│ ├── java/cn/edu/hit/\
+│ │ ├── server/ # 服务器端代码\
+│ │ ├── client/ # 客户端代码\
+│ │ └── common/ # 公共工具类\
+│ └── resources/proto/ # Proto定义文件\
+├── pom.xml\
 └── README.md
 
 

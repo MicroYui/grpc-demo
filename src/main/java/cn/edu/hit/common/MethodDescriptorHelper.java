@@ -12,6 +12,7 @@ public class MethodDescriptorHelper {
     
     /**
      * 创建gRPC方法描述符
+     * 使用DynamicMessage，运行时处理任意消息类型
      */
     public static MethodDescriptor<DynamicMessage, DynamicMessage> createMethodDescriptor(
             Descriptors.ServiceDescriptor serviceDescriptor,

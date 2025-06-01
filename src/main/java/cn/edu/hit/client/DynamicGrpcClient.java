@@ -12,6 +12,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,7 +33,7 @@ public class DynamicGrpcClient {
         this.protoManager = new ProtoFileManager();
         this.objectMapper = new ObjectMapper();
         this.jsonParser = JsonFormat.parser().ignoringUnknownFields();
-        this.jsonPrinter = JsonFormat.printer().includingDefaultValueFields();
+        this.jsonPrinter = JsonFormat.printer();
     }
 
     /**

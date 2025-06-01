@@ -1,6 +1,5 @@
 package cn.edu.hit.common;
 
-import com.github.os72.protocjar.Protoc;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 
@@ -15,6 +14,13 @@ import java.util.*;
 public class ProtoFileManager {
     private final Map<String, Descriptors.FileDescriptor> fileDescriptors = new HashMap<>();
     private final Map<String, Descriptors.ServiceDescriptor> serviceDescriptors = new HashMap<>();
+
+    // 添加 protoc 可执行文件路径配置
+    private String protocPath = "protoc"; // 默认从系统路径查找
+
+    public void setProtocPath(String protocPath) {
+        this.protocPath = protocPath;
+    }
 
     /**
      * 加载并编译proto文件
@@ -53,31 +59,40 @@ public class ProtoFileManager {
     private void compileProtoFiles(File[] protoFiles, String outputDir, String protoDir) throws Exception {
         String outputPath = outputDir + File.separator + "all.desc";
 
-        // 构建proto文件名列表
-        List<String> protoFileNames = new ArrayList<>();
+        // 构建protoc命令
+        List<String> command = new ArrayList<>();
+        command.add(protocPath); // protoc可执行文件
+        command.add("--descriptor_set_out=" + outputPath); // 输出descriptor文件
+        command.add("--include_imports"); // 包含依赖的proto
+        command.add("--include_source_info"); // 包含源码信息
+        command.add("--proto_path=" + protoDir); // proto文件搜索路径
+        
+        // 添加所有proto文件
         for (File protoFile : protoFiles) {
-            protoFileNames.add(protoFile.getName());
+            command.add(protoFile.getName());
         }
 
-        // 构建protoc参数
-        List<String> args = new ArrayList<>();
-        args.add("--descriptor_set_out=" + outputPath);
-        args.add("--include_imports");
-        args.add("--include_source_info");
-        args.add("--proto_path=" + protoDir);
-        args.addAll(protoFileNames);
+        System.out.println("Executing protoc command: " + String.join(" ", command));
+        System.out.println("Working directory: " + protoDir);
 
-        System.out.println("Compiling proto files: " + protoFileNames);
-        System.out.println("Proto path: " + protoDir);
-        System.out.println("Output: " + outputPath);
+        // 使用 ProcessBuilder 执行命令
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.directory(new File(protoDir));
+        processBuilder.redirectErrorStream(true); // 将错误流重定向到标准输出
 
-        // 设置工作目录并执行编译
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.directory(new File(protoDir));  // 设置工作目录为proto目录
+        Process process = processBuilder.start();
 
-        int result = Protoc.runProtoc(args.toArray(new String[0]));
-        if (result != 0) {
-            throw new RuntimeException("Failed to compile proto files");
+        // 读取输出
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("protoc output: " + line);
+            }
+        }
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new RuntimeException("Failed to compile proto files, exit code: " + exitCode);
         }
     }
 
