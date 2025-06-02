@@ -122,7 +122,6 @@ public class DynamicGrpcServer {
         private MethodDescriptor<DynamicMessage, DynamicMessage> createMethodDescriptor(
                 Descriptors.ServiceDescriptor serviceDescriptor,
                 Descriptors.MethodDescriptor methodDescriptor) {
-
             String fullMethodName = serviceDescriptor.getFullName() + "/" + methodDescriptor.getName();
 
             return MethodDescriptor.<DynamicMessage, DynamicMessage>newBuilder()

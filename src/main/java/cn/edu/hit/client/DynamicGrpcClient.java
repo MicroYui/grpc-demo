@@ -52,16 +52,14 @@ public class DynamicGrpcClient {
         System.out.println("Debug: Calling service=" + serviceName + ", method=" + methodName);
 
         // 获取服务描述符
-        Descriptors.ServiceDescriptor serviceDescriptor =
-                protoManager.getServiceDescriptor(serviceName);
+        Descriptors.ServiceDescriptor serviceDescriptor = protoManager.getServiceDescriptor(serviceName);
         if (serviceDescriptor == null) {
             throw new IllegalArgumentException("Service not found: " + serviceName);
         }
         System.out.println("Debug: Found service descriptor: " + serviceDescriptor.getFullName());
 
         // 获取方法描述符
-        Descriptors.MethodDescriptor methodDescriptor =
-                serviceDescriptor.findMethodByName(methodName);
+        Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
         if (methodDescriptor == null) {
             throw new IllegalArgumentException(
                     "Method not found: " + methodName + " in service: " + serviceName);
@@ -71,25 +69,16 @@ public class DynamicGrpcClient {
         // 创建gRPC方法描述符
         MethodDescriptor<DynamicMessage, DynamicMessage> grpcMethodDescriptor =
                 MethodDescriptorHelper.createMethodDescriptor(serviceDescriptor, methodDescriptor);
-        if (grpcMethodDescriptor == null) {
-            throw new IllegalStateException("Failed to create gRPC method descriptor");
-        }
         System.out.println("Debug: Created gRPC method descriptor: " + grpcMethodDescriptor.getFullMethodName());
 
         // 构建请求消息
         try {
             DynamicMessage.Builder requestBuilder =
                     DynamicMessage.newBuilder(methodDescriptor.getInputType());
-            if (requestBuilder == null) {
-                throw new IllegalStateException("Failed to create request builder");
-            }
 
             System.out.println("Debug: Parsing JSON: " + requestJson);
             jsonParser.merge(requestJson, requestBuilder);
             DynamicMessage request = requestBuilder.build();
-            if (request == null) {
-                throw new IllegalStateException("Failed to build request message");
-            }
             System.out.println("Debug: Built request message: " + request);
 
             // 检查channel状态
